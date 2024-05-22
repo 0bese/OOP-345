@@ -9,7 +9,7 @@
 #error "The header guard for 'FoodOrder.h' doesn't follow the convention!"
 #endif
 
-int cout = 0; // won't compile if headers don't follow convention regarding namespaces
+// int cout = 0; // won't compile if headers don't follow convention regarding namespaces
 
 /* input file format: a comma separated set of fields with a consistent format of
 <Order Tag>,<Customer Name>,<Order Description>,<Price>,<Daily Special Status>
@@ -34,6 +34,13 @@ int main(int argc, char *argv[])
 	//   2: second argument
 	//   3: third argument
 	//   ...
+
+	int i{0};
+	const size_t colwidth{3};
+	for (; i < argc; ++i)
+	{
+		std::cout << std::setw(colwidth) << (i + 1) << ": " << argv[i] << std::endl;
+	}
 
 	std::cout << "--------------------------\n\n";
 
@@ -111,5 +118,5 @@ int main(int argc, char *argv[])
 		recordedDeliveryOrders[i].display();
 	std::cout << "--------------------\n";
 
-	return cout;
+	return 0;
 }

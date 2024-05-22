@@ -1,0 +1,18 @@
+﻿/* ------------------------------------------------------
+Workshop 1 Reflection
+Module: directory
+Filename: reflect.txt
+Author        KOJO ANYANE OBESE
+-----------------------------------------------------------*/
+
+
+Firstly, I gained a deeper understanding of the difference between internal and external linkage. For example, in my code, I utilized external linkage for variables like g_taxrate and g_dailydiscount, which were declared in FoodOrder.cpp and accessed from w1_p2.cpp. This distinction helped me organize my code effectively and understand how variables are scoped and accessed within a program.
+
+
+Static variables emerged as a crucial tool in my solution. By utilizing the static keyword within the display() function for the counter variable, I ensured that each order was accurately numbered. This approach simplified the implementation by limiting the scope of counter to the display() function, making the code more robust and easier to maintain.
+
+
+In upgrading the FoodOrder class in part 2, I implemented several enhancements. Adding a copy constructor and copy assignment operator improved the class's ability to handle dynamic memory allocation and deep copying of objects, enhancing the overall reliability of the program. Additionally, refining the read() function to reset member variables before reading new data ensured proper initialization, contributing to the code's robustness.
+
+
+Moreover, I learned how to pass arguments to the main function, enabling the program to accept command-line arguments. This newfound knowledge allowed for greater flexibility and customization in executing the program. Additionally, I grasped the usage of the extern keyword, which proved useful in declaring variables or functions defined in other translation units, facilitating code organization and reusability.

@@ -1,126 +1,148 @@
-
 #define _CRT_SECURE_NO_WARNINGS
 #include "FoodOrder.h"
 
-double g_taxrate;
-double g_dailydiscount;
+double g_taxrate = 0.0; // Initialize global variables
+double g_dailydiscount = 0.0;
 
 namespace seneca
 {
-    FoodOrder::FoodOrder() : food_desc(nullptr), food_price(0), daily_special(false) {}
+	FoodOrder &FoodOrder::setEmpty()
+	{
+		food_desc = nullptr;
+		cust_name[0] = '\0';
+		food_price = 0.0;
+		daily_special = false;
 
-    FoodOrder::FoodOrder(const FoodOrder& FO) {
-		if(FO.cust_name != nullptr && FO.cust_name[0] != '\0' && FO.food_desc != nullptr && FO.food_desc[0] != '\0') {
-			delete[] food_desc;
-			food_desc = nullptr;
-			food_desc = new char[strlen(FO.food_desc) + 1];
-			strcpy(food_desc, FO.food_desc);
-			strcpy(cust_name, FO.cust_name);
-			food_price = FO.food_price;
-			daily_special = FO.daily_special;
-		}
-		else {
-			delete[] food_desc;
-			food_desc = nullptr;
-			cust_name[0] = '\0';
-			food_price = -1;
-			daily_special = false;
-		}
-	}
-
-	// Copy Assignment Overload
-	FoodOrder& FoodOrder::operator=(const FoodOrder& FO) {
-		if (this != &FO) {
-			if (FO.cust_name != nullptr && FO.cust_name[0] != '\0' && FO.food_desc != nullptr && FO.food_desc[0] != '\0') {
-				delete[] food_desc;
-				food_desc = nullptr;
-				food_desc = new char[strlen(FO.food_desc) + 1];
-				strcpy(food_desc, FO.food_desc);
-				strcpy(cust_name, FO.cust_name);
-				food_price = FO.food_price;
-				daily_special = FO.daily_special;
-			}
-			else {
-				delete[] food_desc;
-				food_desc = nullptr;
-				cust_name[0] = '\0';
-				food_price = -1;
-				daily_special = false;
-			}
-		}
 		return *this;
 	}
 
-	void FoodOrder::read(std::istream& istr) {
-		// Resetting "this" instance member variables to default values
-		cust_name[0] = '\0';
+	bool FoodOrder::isEmpty() const
+	{
+		return !cust_name[0];
+	}
+
+	FoodOrder::operator bool() const
+	{
+		return cust_name[0];
+	}
+
+	FoodOrder &FoodOrder::deallocate()
+	{
 		delete[] food_desc;
 		food_desc = nullptr;
-		food_price = -1;
-		daily_special = false;
 
-		// Setting up temporary variables to store data before confirmation
-		char tempCustomer[10];
-		std::string tempFoodDescription;
-		double tempPrice = -1;
-		char tempDailySpecial = '\0'; // Variable to compare whether incoming daily special status is a 'Y' or a 'N'
+		return *this;
+	}
 
-		istr.get(tempCustomer, 10, ',');
-		istr.ignore();
-		getline(istr, tempFoodDescription, ',');
-		istr >> tempPrice;
-		istr.ignore();
-		istr >> tempDailySpecial;
-        
-        if (istr.good()) {
-			strcpy(cust_name, tempCustomer);
-			food_desc = new char[strlen(tempFoodDescription.c_str()) + 1];
-			strcpy(food_desc, tempFoodDescription.c_str());
-			food_price = tempPrice;
-			if (tempDailySpecial == 'Y') {
+	FoodOrder::~FoodOrder()
+	{
+		delete[] food_desc;
+	}
+
+	FoodOrder::FoodOrder(const FoodOrder &foodOrder)
+	{
+		*this = foodOrder;
+	}
+
+	FoodOrder &FoodOrder::operator=(const FoodOrder &foodOrder)
+	{
+		if (this != &foodOrder)
+		{
+			if (foodOrder)
+			{
+				deallocate();
+
+				strcpy(cust_name, foodOrder.cust_name);
+				food_desc = new char[strlen(foodOrder.food_desc) + 1];
+				strcpy(food_desc, foodOrder.food_desc);
+				food_price = foodOrder.food_price;
+				daily_special = foodOrder.daily_special;
+			}
+		}
+
+		return *this;
+	}
+
+	std::istream &FoodOrder::read(std::istream &istr)
+	{
+		string description;
+		if (istr)
+		{
+			istr.getline(cust_name, 10, ',');
+
+			getline(istr, description, ',');
+			deallocate();
+			food_desc = new char[description.length() + 1];
+			strcpy(food_desc, description.c_str());
+
+			istr >> food_price;
+			istr.ignore();
+
+			char tempSpecial = istr.get();
+			if (tempSpecial == 'Y')
+			{
 				daily_special = true;
 			}
-			else {
+			else if (tempSpecial == 'N')
+			{
 				daily_special = false;
 			}
+
+			istr.ignore(1000, '\n');
 		}
+
+		if (!istr)
+		{
+			delete[] food_desc;
+			setEmpty();
+
+			istr.clear();
+			istr.ignore(1000, '\n');
+		}
+		return istr;
 	}
 
-	void FoodOrder::display()const {
-		static int counter = 0;
-		counter++;
-		double priceWTax = (1.00 + g_taxrate) * food_price;
-		double specialPrice = priceWTax - g_dailydiscount;
+	std::ostream &FoodOrder::display(std::ostream &ostr) const
+	{
+		static int counter = 1;
 
-		if (cust_name[0] == '\0') {
-			std::cout.setf(std::ios::left);
-			std::cout.width(2);
-			std::cout << counter << ". No Order" << std::endl;
-		}
-		else {
-			std::cout.setf(std::ios::left);
-			std::cout.width(2);
-			std::cout << counter << ". ";
-			std::cout.width(10);
-			std::cout << cust_name << "|";
-			std::cout.width(25); 
-			std::cout << food_desc << "|";
-			std::cout.width(12);
-			std::cout.setf(std::ios::fixed);
-			std::cout.precision(2);
-			std::cout << priceWTax << "|";
-			if (daily_special == true) {
-				std::cout.unsetf(std::ios::left);
-				std::cout.width(13);
-				std::cout << specialPrice;
+		// Can also use the iomanip library to use setw, width, right, fixed, left
+		ostr.setf(ios::left);
+		ostr.width(2);
+		ostr << counter << ". ";
+		if (!isEmpty())
+		{
+			ostr.width(10);
+			ostr << cust_name;
+			ostr << "|";
+			ostr.width(25);
+			ostr << food_desc;
+			ostr << "|";
+			ostr.width(12);
+
+			double priceAfterTax = food_price * (1 + g_taxrate);
+			ostr.setf(ios::fixed);
+			ostr.precision(2);
+			ostr << priceAfterTax;
+			ostr << "|";
+			ostr.unsetf(ios::left);
+			if (daily_special)
+			{
+				ostr.width(13);
+				ostr.setf(ios::right);
+				ostr << priceAfterTax - g_dailydiscount;
+				ostr.unsetf(ios::right);
 			}
-			std::cout << std::endl;
+			ostr.unsetf(ios::fixed);
+		}
+		else
+		{
+			ostr << "No Order";
 		}
 
-	}
+		ostr << endl;
+		counter++;
 
-    FoodOrder::~FoodOrder()
-    {
-        delete[] food_desc; // Free dynamically allocated memory
-    }
+		return ostr;
+	}
 }
