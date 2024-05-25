@@ -1,0 +1,22 @@
+﻿/*/////////////////////////////////////////////////////////////////////////
+                        Workshop-2 reflect.txt
+Full Name  : Kojo Anyane Obese
+Student ID#: 137653226
+Email      : kaobese@myseneca.ca
+Section    : NRA
+Date       : 25/05/2024
+
+
+Authenticity Declaration:
+I have done all the coding by myself and only copied the code that
+my professor provided to complete my workshops and assignments.
+/////////////////////////////////////////////////////////////////////////*/
+
+
+This week's workshop delved into the implementation of move constructors and move assignment operators in the ProteinDatabase class, alongside refining the TimedTask class. The focus was on optimizing resource management and enhancing performance by efficiently handling dynamically allocated memory.
+
+
+In the ProteinDatabase module, the move constructor and move assignment operator were introduced to facilitate the seamless transfer of resources, such as the array containing protein sequences. By leveraging move semantics, unnecessary copying and memory reallocation were circumvented, leading to improved runtime efficiency and reduced memory usage.
+
+
+Similarly, the TimedTask module underwent enhancements to ensure precise timing measurements and effective task management. With the integration of move semantics, the class became more adept at handling task records, particularly in scenarios involving resource transfers or temporary objects, thereby augmenting its usability and efficiency.
