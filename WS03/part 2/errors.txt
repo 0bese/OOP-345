@@ -1,0 +1,3 @@
+w3_p2_prof.cpp:22:6: error: #error "The header guard for 'OrderedCollection.h' doesn't follow the convention!"
+   22 |     #error "The header guard for 'OrderedCollection.h' doesn't follow the convention!"
+      |      ^~~~~

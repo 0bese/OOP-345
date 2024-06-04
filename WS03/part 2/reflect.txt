@@ -1,0 +1,23 @@
+﻿Reflection on Workshop - Templates
+
+
+This week's workshop centered on templates in C++, specifically implementing a templated `Collection` class and an `OrderedCollection` class. The `Collection` class template was defined to handle a fixed-size array of items of any data type, with a maximum capacity specified by the template parameter.
+
+
+Key features implemented:
+- Static Members: `m_smallestItem` and `m_largestItem` track the smallest and largest items.
+- Operator Overloading: The `operator+=` method adds items to the collection, updates size, and adjusts the smallest and largest items.
+- Array Subscript Operator: The `operator[]` provides access to elements by index.
+- Initialization: Specialized static member initialization for the `Book` type.
+- Print Method: Outputs the collection contents to a stream.
+
+
+The `OrderedCollection` class extended `Collection` by maintaining items in a sorted order:
+- Insertion with Ordering: The `operator+=` method was overridden to insert items while keeping the collection ordered.
+- Inheritance: Leveraged methods from `Collection`, like `size`, `capacity`, and `print`.
+
+
+Testing in `w3_p2.cpp` involved creating `Collection` and `OrderedCollection` objects for `int`, `double`, and `Book`, adding elements, printing collections, and verifying smallest and largest elements based on specific criteria.
+
+
+The exercise demonstrated the flexibility of templates in creating generic data structures, enabling code reuse and type safety.
