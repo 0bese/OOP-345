@@ -1,0 +1,14 @@
+/*
+ Name: Kojo Anyane Obese
+ Email: kaobese@myseneca.ca
+ Student ID: 137653226
+ Date: 8 June 2024
+ */
+
+In Workshop 4, the Restaurant and Reservation classes show a composition relationship. Here, the Restaurant class owns and handles the lifecycle of Reservation objects. It creates new Reservation objects in its constructor and deletes them in its destructor.
+
+Conversely, the ConfirmationSender and Reservation classes have an aggregation relationship. The ConfirmationSender class only references Reservation objects, not owning them. It doesn't delete Reservation objects in its destructor but includes methods to add or remove references. It only deletes its array of pointers in the destructor.
+
+Move and copy functions differ in implementation for composition and aggregation. For composition, like the Restaurant class, the parent handles child lifecycle, requiring explicit deallocation of Reservation objects in move and copy functions. Conversely, for the ConfirmationSender class using aggregation, only deleting the array of pointers suffices, without concern for Reservation object lifecycle.
+
+In copy operations, the Restaurant class deep copies Reservation objects, while the ConfirmationSender class copies references or pointers, omitting the creation of new Reservation objects.
