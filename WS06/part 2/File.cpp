@@ -1,13 +1,20 @@
+/*
+ Name: Kojo Anyane Obese
+ Email: kaobese@myseneca.ca
+ Student ID: 137653226
+ Date: 9 July 2024
+ */
+
 #define _CRT_SECURE_NO_WARNINGS
-#include <iomanip>
-#include "Resource.h"
-#include "Flags.h"
 #include "File.h"
+
+using namespace std;
 namespace seneca
 {
-
-    File::File(const std::string &name, const std::string &contents)
-        : Resource(name), m_contents(contents) {}
+    File::File(const std::string &name, const std::string &contents) : m_contents(contents)
+    {
+        m_name = name;
+    }
 
     void File::update_parent_path(const std::string &path)
     {
@@ -37,10 +44,5 @@ namespace seneca
     size_t File::size() const
     {
         return m_contents.size();
-    }
-
-    Resource *File::clone() const
-    {
-        return new File(*this);
     }
 }

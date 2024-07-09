@@ -4,121 +4,127 @@
  Student ID: 137653226
  Date: 9 July 2024
  */
-#include "Filesystem.h"
-#include <fstream>
-#include <sstream>
-#include <algorithm>
 
+#define _CRT_SECURE_NO_WARNINGS
+#include "Filesystem.h"
+#include "File.h"
+
+using namespace std;
 namespace seneca
 {
-    Filesystem::Filesystem(const std::string &filename, const std::string &root_name)
-        : m_root(nullptr), m_current(nullptr)
+    Filesystem::Filesystem(const std::string &fileName, const std::string &str)
     {
 
-        m_root = new Directory(root_name);
-        m_current = m_root;
-
-        // Load contents from file
-        std::ifstream file(filename);
-        if (!file.is_open())
+        std::ifstream inputFile(fileName);
+        if (!inputFile)
         {
-            throw std::runtime_error("Failed to open file: " + filename);
+            throw invalid_argument("File not found: " + fileName);
         }
-
-        std::string line;
-        while (std::getline(file, line))
+        else
         {
-            std::istringstream iss(line);
-            std::string path;
-            std::string contents;
+            m_root = new Directory(str);
+            m_current = m_root;
+            string line;
+            while (getline(inputFile, line))
+            {
+                string path, contents;
+                size_t delimiter = line.find("|");
+                size_t pos1 = line.find_first_not_of(" ");
+                size_t pos2 = line.find_last_not_of(" ", delimiter - 1);
+                path = line.substr(pos1, pos2 - pos1 + 1);
+                line.erase(0, delimiter + 1);
+                pos1 = line.find_first_not_of(" ");
+                line.erase(0, pos1);
+                pos2 = line.find_last_not_of(" ");
+                contents = line.substr(0, pos2 + 1);
+                size_t pos = 0;
+                vector<seneca::OpFlags> flag;
+                flag.push_back(seneca::OpFlags::RECURSIVE);
+                Directory *rootDir = m_root;
+                while ((pos = path.find("/")) != string::npos)
+                {
+                    if (!(m_root->find(path.substr(0, pos + 1), flag)))
+                    {
+                        Directory *dir = new Directory(path.substr(0, pos + 1));
+                        *rootDir += dir;
+                        rootDir = dir;
+                    }
+                    else
+                    {
+                        rootDir = dynamic_cast<Directory *>(m_root->find(path.substr(0, pos + 1), flag));
+                    }
+                    path = path.substr(pos + 1);
+                }
 
-            if (line.find('|') != std::string::npos)
-            {
-                std::getline(iss, path, '|');
-                std::getline(iss, contents);
-                contents = contents.substr(contents.find_first_not_of(" "), contents.find_last_not_of(" ") + 1);
-                create_resource(path, contents);
-            }
-            else
-            {
-                std::getline(iss, path);
-                create_resource(path);
+                if (delimiter != string::npos)
+                {
+                    if (!(m_root->find(path)))
+                    {
+                        File *file = new File(path, contents);
+                        *rootDir += file;
+                    }
+                }
             }
         }
-
-        file.close();
     }
 
-    // Destructor
-    Filesystem::~Filesystem()
+    Filesystem::Filesystem(Filesystem &&other) noexcept
     {
-        delete m_root;
+        *this = std::move(other);
     }
 
-    // Operator += to add a resource to the current directory
-    Filesystem &Filesystem::operator+=(Resource *resource)
+    Filesystem &Filesystem::operator=(Filesystem &&other) noexcept
     {
-        (*m_current) += resource;
+        if (this != &other)
+        {
+            delete m_root;
+            m_root = other.m_root;
+            delete other.m_root;
+            other.m_current = nullptr;
+            m_current = m_root;
+        }
         return *this;
     }
 
-    // Change directory method
-    Directory *Filesystem::change_directory(const std::string &name)
+    Filesystem &Filesystem::operator+=(Resource *resPtr)
     {
-        if (name.empty())
+        *m_current += resPtr;
+        return *this;
+    }
+
+    Directory *Filesystem::change_directory(const std::string &dirName)
+    {
+
+        if (dirName.empty())
         {
             m_current = m_root;
         }
         else
         {
-            Directory *dir = dynamic_cast<Directory *>(m_current->find(name));
-            if (!dir)
+            vector<seneca::OpFlags> flag;
+            flag.push_back(seneca::OpFlags::RECURSIVE);
+            Directory *dir = dynamic_cast<Directory *>(m_current->find(dirName, flag));
+            if (dir)
             {
-                throw std::invalid_argument("Cannot change directory! " + name + " not found.");
+                m_current = dir;
+                return m_current;
             }
-            m_current = dir;
+            else
+            {
+                throw std::invalid_argument("Cannot change directory! " + dirName + " not found.");
+            }
         }
         return m_current;
     }
 
-    // Get current directory method
     Directory *Filesystem::get_current_directory() const
     {
         return m_current;
     }
 
-    // Helper function to create resources (directories/files)
-    void Filesystem::create_resource(const std::string &path, const std::string &contents)
+    Filesystem::~Filesystem()
     {
-        std::istringstream iss(path);
-        std::string token;
-        Directory *current_dir = m_root;
-
-        while (std::getline(iss, token, '/'))
-        {
-            if (token.empty())
-                continue;
-
-            Resource *res = current_dir->find(token);
-            if (!res)
-            {
-                if (iss.eof())
-                {
-                    res = new File(token, contents);
-                }
-                else
-                {
-                    res = new Directory(token);
-                }
-                (*current_dir) += res;
-            }
-
-            current_dir = dynamic_cast<Directory *>(res);
-            if (!current_dir)
-            {
-                throw std::runtime_error("Failed to cast Resource to Directory.");
-            }
-        }
+        delete m_root;
+        m_current = nullptr;
     }
-
-} // namespace seneca
+}
