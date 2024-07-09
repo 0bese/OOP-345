@@ -7,8 +7,10 @@
 #include <string>
 #include "Flags.h"
 
-namespace seneca {
-    class Resource {
+namespace seneca
+{
+    class Resource
+    {
     protected:
         // Stores the name of the resource
         std::string m_name{};
@@ -16,7 +18,7 @@ namespace seneca {
         std::string m_parent_path = "/";
 
     public:
-        virtual void update_parent_path(const std::string&) = 0;
+        virtual void update_parent_path(const std::string &) = 0;
         virtual std::string name() const = 0;
         virtual int count() const = 0;
         virtual std::string path() const = 0;
@@ -24,6 +26,6 @@ namespace seneca {
         virtual NodeType type() const = 0;
         virtual ~Resource() = default;
     };
-}  // namespace seneca
+} // namespace seneca
 
 #endif

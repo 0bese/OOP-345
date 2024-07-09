@@ -15,11 +15,13 @@
 
 int cout = 0; // won't compile if headers don't follow convention
 
-void printLine() {
+void printLine()
+{
     std::cout << "--------------------------\n";
 }
 
-void printHeader(std::string label) {
+void printHeader(std::string label)
+{
     size_t padLeft = (26 - label.length()) / 2;
 
     printLine();
@@ -27,7 +29,8 @@ void printHeader(std::string label) {
     printLine();
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
     std::cout << "Command Line:\n";
     std::cout << "--------------------------\n";
     for (int i = 0; i < argc; ++i)
@@ -39,28 +42,36 @@ int main(int argc, char** argv) {
      **************************************************/
     ::printHeader("FILESYSTEM");
 
-    try {
+    try
+    {
         seneca::Filesystem failedFs("non-existentfile");
-    } catch (...) {
-        std::cout << "**EXPECTED EXCEPTION: Filesystem not created with invalid filename.\n" << std::endl;
+    }
+    catch (...)
+    {
+        std::cout << "**EXPECTED EXCEPTION: Filesystem not created with invalid filename.\n"
+                  << std::endl;
     }
 
-    if(std::is_copy_constructible<seneca::Filesystem>::value || std::is_copy_assignable<seneca::Filesystem>::value) {
-        std::cout << "**EXCEPTION: Filesystem should not support copy operations.\n" << std::endl;
+    if (std::is_copy_constructible<seneca::Filesystem>::value || std::is_copy_assignable<seneca::Filesystem>::value)
+    {
+        std::cout << "**EXCEPTION: Filesystem should not support copy operations.\n"
+                  << std::endl;
     }
 
-    if ((!std::is_move_constructible<seneca::Filesystem>::value) || (!std::is_move_assignable<seneca::Filesystem>::value)) {
-        std::cout << "**EXCEPTION: Filesystem should support move operations.\n" << std::endl;
+    if ((!std::is_move_constructible<seneca::Filesystem>::value) || (!std::is_move_assignable<seneca::Filesystem>::value))
+    {
+        std::cout << "**EXCEPTION: Filesystem should support move operations.\n"
+                  << std::endl;
     }
 
     seneca::Filesystem fs(argv[1]);
 
     std::vector<seneca::FormatFlags> fflags;
-    
+
     std::vector<seneca::OpFlags> oflags;
     oflags.push_back(seneca::OpFlags::RECURSIVE);
 
-    seneca::Directory* working_dir = fs.get_current_directory();
+    seneca::Directory *working_dir = fs.get_current_directory();
     working_dir->display(std::cout);
 
     ::printLine();
@@ -71,10 +82,14 @@ int main(int argc, char** argv) {
     ::printHeader("CHANGE DIR");
     fflags.push_back(seneca::FormatFlags::LONG);
 
-    try {
+    try
+    {
         working_dir = fs.change_directory("pics");
-    } catch(std::invalid_argument&) {
-        std::cout << "**EXPECTED EXCEPTION: Couldn't change directory to invalid directory.\n" << std::endl;
+    }
+    catch (std::invalid_argument &)
+    {
+        std::cout << "**EXPECTED EXCEPTION: Couldn't change directory to invalid directory.\n"
+                  << std::endl;
     }
 
     working_dir = fs.change_directory("images/");
@@ -87,28 +102,31 @@ int main(int argc, char** argv) {
      **************************************************/
     ::printHeader("FIND");
 
-    seneca::File* elephant_image = dynamic_cast<seneca::File*>(working_dir->find("elephant", oflags));
-    if(!elephant_image) {
-        std::cout << "**EXPECTED ERROR: File elephant not found in " << working_dir->path() << " recursively\n" << std::endl;
+    seneca::File *elephant_image = dynamic_cast<seneca::File *>(working_dir->find("elephant", oflags));
+    if (!elephant_image)
+    {
+        std::cout << "**EXPECTED ERROR: File elephant not found in " << working_dir->path() << " recursively\n"
+                  << std::endl;
     }
 
-    elephant_image = dynamic_cast<seneca::File*>(working_dir->find("elephant.png"));
-    if (!elephant_image) {
-        std::cout << "**EXPECTED ERROR: File elephant.png not found in " << working_dir->path() <<  " non-recursively\n" << std::endl;
+    elephant_image = dynamic_cast<seneca::File *>(working_dir->find("elephant.png"));
+    if (!elephant_image)
+    {
+        std::cout << "**EXPECTED ERROR: File elephant.png not found in " << working_dir->path() << " non-recursively\n"
+                  << std::endl;
     }
 
-    elephant_image = dynamic_cast<seneca::File*>(working_dir->find("elephant.png", oflags));
+    elephant_image = dynamic_cast<seneca::File *>(working_dir->find("elephant.png", oflags));
 
     std::cout << elephant_image->path() << " was found in fileystem" << std::endl;
 
     ::printLine();
 
-
     /*************************************************
      * Adding a directory to another directory
      **************************************************/
     ::printHeader("ADD TO DIRECTORY");
-    seneca::Directory* classified = new seneca::Directory("classified/");
+    seneca::Directory *classified = new seneca::Directory("classified/");
     *classified += new seneca::File(".aliens.txt", "Are aliens real? Go to Area 51 and find out!");
     *classified += new seneca::File(".polls.txt", "Polling results for the current election are in here.");
 
@@ -134,9 +152,12 @@ int main(int argc, char** argv) {
     std::cout << "Current size of filesystem is " << working_dir->size() << " bytes\n";
     std::cout << "Current size of documents/ is " << working_dir->find("documents/")->size() << " bytes\n\n";
 
-    try {
+    try
+    {
         working_dir->remove("documents/");
-    } catch(...) {
+    }
+    catch (...)
+    {
         std::cout << "**EXPECTED EXCEPTION: Trying to remove a directory without passing the recursive flag.\n\n";
     }
 
