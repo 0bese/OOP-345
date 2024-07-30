@@ -1,0 +1,27 @@
+/*/////////////////////////////////////////////////////////////////////////
+                        Milestone-3
+Full Name  : Kojo Anyane Obese
+Student ID#: 137653226
+Email      : kaobese@myseneca.ca
+Section    : NRA
+Date       : 29/07/2024
+
+Authenticity Declaration:
+I have done all the coding by myself and only copied the code that
+my professor provided to complete my workshops and assignments.
+/////////////////////////////////////////////////////////////////////////*/
+
+Reflection on Milestone 3
+
+Milestone 3 of our project focuses on implementing and testing the `Workstation` and `LineManager` modules, which are crucial components in simulating an assembly line environment. The overall goal of our project is to develop a robust simulation that manages customer orders as they progress through various stations on the assembly line.
+
+Workstation Module:
+The `Workstation` class represents individual stations on the assembly line responsible for processing customer orders. Each station manages a queue of `CustomerOrder` objects and handles the processing of items associated with that station. Key functionalities include filling orders, moving orders to the next station in the line, and displaying the current state of the station. The `Workstation` class ensures efficient order processing and manages the flow of items along the assembly line.
+
+LineManager Module
+The `LineManager` class orchestrates the entire assembly line by configuring the sequence of `Workstation` objects and managing the movement of `CustomerOrder` objects from station to station. It reads configuration data from a file to establish the sequence of stations, assigns orders to the first station, and iteratively processes orders through each station until completion or until no further progress can be made. The `LineManager` class is responsible for maintaining the integrity of the assembly process and ensures that all customer orders are processed efficiently and accurately.
+
+Project Overview:
+Our project aims to simulate an assembly line environment using C++ and object-oriented programming principles. It consists of multiple milestones, each building upon the previous one to implement and test specific functionalities. Milestone 3 marks a significant step forward by integrating `Workstation` and `LineManager` modules, thereby advancing the simulation's capability to manage and process customer orders through a configured assembly line.
+
+
