@@ -58,6 +58,18 @@ namespace seneca
 		//         into variables "total_items" and "data". Don't forget to allocate
 		//         memory for "data".
 		//       The file is binary and has the format described in the specs.
+		std::ifstream file(filename, std::ios::in | std::ios::binary);
+
+		if (!file)
+		{
+			std::cout << "Cannot read file '" << filename << "'.\n";
+			exit(1);
+		}
+
+		file.read((char *)&total_items, sizeof(total_items));
+		data = new int[total_items];
+		file.read((char *)data, sizeof(int) * total_items);
+		file.close();
 
 		std::cout << "Item's count in file '" << filename << "': " << total_items << std::endl;
 		std::cout << "  [" << data[0] << ", " << data[1] << ", " << data[2] << ", ... , "
@@ -105,13 +117,13 @@ namespace seneca
 		}
 
 		computeAvgFactor(data, total_items, total_items, avg);
+
 		computeVarFactor(data, total_items, total_items, avg, var);
 
 		out.write((char *)&total_items, sizeof(total_items));
 		out.write((char *)data, sizeof(int) * total_items);
 
 		out.close();
-
 		return 4;
 	}
 }
